@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.siyuan.dao.CostDao">
+
+	<select id="findAll" resultType="com.siyuan.entity.Cost">
+		select * from cost order by cost_id
+	</select>
+
+	<insert id="save" parameterType="com.siyuan.entity.Cost">
+	<![CDATA[
+		insert into cost values(
+			cost_seq.nextval,
+			#{name,jdbcType=VARCHAR},
+			#{base_duration,jdbcType=INTEGER},
+			#{base_cost,jdbcType=DOUBLE},
+			#{unit_cost,jdbcType=DOUBLE},
+			#{status,jdbcType=CHAR},
+			#{descr,jdbcType=VARCHAR},
+			#{creatime,jdbcType=TIMESTAMP},
+			#{startime,jdbcType=TIMESTAMP},
+			#{cost_type,jdbcType=CHAR}
+		)
+	]]>
+	</insert>
+	
+	<select id="findById" parameterType="int" 
+		resultType="com.siyuan.entity.Cost">
+		select * from cost where cost_id=#{id}
+	</select>
+	
+	<update id="update" parameterType="com.siyuan.entity.Cost">
+		<![CDATA[
+			update cost set 
+			name=#{name}, 
+			base_duration=#{base_duration,jdbcType=NUMERIC},
+			base_cost=#{base_cost,jdbcType=NUMERIC},
+			unit_cost=#{unit_cost,jdbcType=NUMERIC},
+			descr=#{descr,jdbcType=VARCHAR},
+			cost_type=#{cost_type,jdbcType=CHAR}
+			where cost_id=#{cost_id}
+		]]>
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		delete from cost where cost_id=#{id}
+	</delete>
+	
+	<select id="findByPage" 
+		parameterType="com.siyuan.entity.page.Page" 
+		resultType="com.siyuan.entity.Cost">
+		select * from (
+			select a.*,rownum r from (
+				select * from cost order by 
+				<choose>
+					<!-- 任意排序条件非空时，按条件排序 -->
+					<when test="(baseDurationSort!=null &amp;&amp; baseDurationSort.length()>0) || (baseCostSort!=null &amp;&amp; baseCostSort.length()>0)">
+						<trim suffixOverrides=",">
+							<if test='baseDurationSort!=null &amp;&amp; baseDurationSort.equals("asc")'>
+								base_duration asc,
+							</if>
+							<if test='baseDurationSort!=null &amp;&amp; baseDurationSort.equals("desc")'>
+								base_duration desc,
+							</if>
+							<if test='baseCostSort!=null &amp;&amp; baseCostSort.equals("asc")'>
+								base_cost asc,
+							</if>
+							<if test='baseCostSort!=null &amp;&amp; baseCostSort.equals("desc")'>
+								base_cost desc,
+							</if>
+						</trim>
+					</when>
+					<!-- 默认按照ID排序 -->
+					<otherwise>
+						cost_id
+					</otherwise>
+				</choose>
+			) a
+		) where r&lt;#{end} and r>#{begin}
+	</select>
+	
+	<select id="findRows" resultType="int">
+		select count(*) from cost
+	</select>
+	
+</mapper>

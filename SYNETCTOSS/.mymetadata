@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="SYNETCTOSS"
+  id="myeclipse.1408410906082"
+  context-root="/SYNETCTOSS"
+  j2ee-spec="5.0"
+  archive="SYNETCTOSS.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+
